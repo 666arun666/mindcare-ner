@@ -1,0 +1,283 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # Changes Detection Job
+  # ----------------------------------------------------------------------------
+  changes:
+    name: Detect Changed Components
+    runs-on: ubuntu-latest
+    outputs:
+      flutter: ${{ steps.filter.outputs.flutter }}
+      react: ${{ steps.filter.outputs.react }}
+      backend: ${{ steps.filter.outputs.backend }}
+      ml: ${{ steps.filter.outputs.ml }}
+      voice: ${{ steps.filter.outputs.voice }}
+      shared: ${{ steps.filter.outputs.shared }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Check for file changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            flutter:
+              - 'apps/elderly_app/**'
+            react:
+              - 'apps/caregiver_dashboard/**'
+            backend:
+              - 'backend/**'
+              - 'shared/**'
+            ml:
+              - 'ml/**'
+              - 'shared/**'
+            voice:
+              - 'voice/**'
+              - 'shared/**'
+            shared:
+              - 'shared/**'
+
+  # ----------------------------------------------------------------------------
+  # Flutter CI (Elderly App)
+  # ----------------------------------------------------------------------------
+  flutter-ci:
+    name: Flutter Elderly App CI
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.flutter == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/elderly_app
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java (for Android toolchain)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Restore Flutter Dependencies
+        run: flutter pub get
+
+      - name: Verify Formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Run Flutter Static Analysis
+        run: flutter analyze
+
+      - name: Run Flutter Unit & Widget Tests
+        run: flutter test --coverage
+
+  # ----------------------------------------------------------------------------
+  # React CI (Caregiver Dashboard)
+  # ----------------------------------------------------------------------------
+  react-ci:
+    name: React Caregiver Dashboard CI
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.react == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/caregiver_dashboard
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: apps/caregiver_dashboard/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript Type Check
+        run: npx tsc --noEmit
+
+      - name: Run Unit Tests
+        run: npm test -- --run
+
+      - name: Build Production Bundle
+        run: npm run build
+
+  # ----------------------------------------------------------------------------
+  # FastAPI CI (Backend & Sync Engine)
+  # ----------------------------------------------------------------------------
+  fastapi-ci:
+    name: FastAPI Backend CI
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest pytest-cov
+          pip install -e .
+
+      - name: Ruff Lint Check
+        run: ruff check src/ tests/
+
+      - name: Ruff Formatting Check
+        run: ruff format --check src/ tests/
+
+      - name: Pytest Suite (Endpoints, Auth, Sync Idempotency)
+        run: pytest -v --cov=src --cov-report=term-missing tests/
+
+  # ----------------------------------------------------------------------------
+  # AI/ML Engine CI (Adaptive Difficulty & Anomaly Detection)
+  # ----------------------------------------------------------------------------
+  ml-ci:
+    name: AI/ML Engine CI
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.ml == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ml
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest pytest-cov
+          pip install -e .
+
+      - name: Ruff Lint Check
+        run: ruff check src/ tests/
+
+      - name: Ruff Formatting Check
+        run: ruff format --check src/ tests/
+
+      - name: Run ML Unit Tests (Performance Score, Boundaries, Isolation Forest)
+        run: pytest -v --cov=src --cov-report=term-missing tests/
+
+  # ----------------------------------------------------------------------------
+  # Voice Module CI (Intent Parsing & Allowlisted Commands)
+  # ----------------------------------------------------------------------------
+  voice-ci:
+    name: Voice Processing CI
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.voice == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: voice
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff pytest pytest-cov
+          pip install -e .
+
+      - name: Ruff Lint Check
+        run: ruff check src/ tests/
+
+      - name: Ruff Formatting Check
+        run: ruff format --check src/ tests/
+
+      - name: Run Voice Tests (Intent Matching, Allowlisted Commands, Confirmation)
+        run: pytest -v --cov=src --cov-report=term-missing tests/
+
+  # ----------------------------------------------------------------------------
+  # Shared Contracts & Schemas Validation
+  # ----------------------------------------------------------------------------
+  shared-ci:
+    name: Shared Contracts Validation
+    needs: changes
+    if: github.event_name == 'push' || needs.changes.outputs.shared == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate OpenAPI & Schemas
+        run: |
+          python -m pip install pydantic pyyaml
+          python -c "import yaml; yaml.safe_load(open('shared/contracts/openapi.yaml'))"
+          python -c "import sys; sys.path.insert(0, '.'); from shared.schemas.sync_event import SyncEventBatch; print('Schemas valid')"
+
+  # ----------------------------------------------------------------------------
+  # Gatekeeper Job (For Branch Protection)
+  # ----------------------------------------------------------------------------
+  ci-status:
+    name: CI Pipeline Status
+    needs: [flutter-ci, react-ci, fastapi-ci, ml-ci, voice-ci, shared-ci]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Status
+        run: |
+          if [ "${{ needs.flutter-ci.result }}" == "failure" ] || \
+             [ "${{ needs.react-ci.result }}" == "failure" ] || \
+             [ "${{ needs.fastapi-ci.result }}" == "failure" ] || \
+             [ "${{ needs.ml-ci.result }}" == "failure" ] || \
+             [ "${{ needs.voice-ci.result }}" == "failure" ] || \
+             [ "${{ needs.shared-ci.result }}" == "failure" ]; then
+            echo "CI pipeline failed."
+            exit 1
+          fi
+          echo "All active CI checks succeeded."

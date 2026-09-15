@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "mindcare-ner-rules",
+  "description": "Domain-specific code review rules for MINDCARE NER (SIH26003)",
+  "rules": [
+    {
+      "path": "**/*",
+      "rule": "CRITICAL: Under NO circumstances allow the introduction of LangGraph. LangChain is the ONLY permitted LLM orchestration framework. Reject any imports or mentions of langgraph. MEDICAL SAFETY: Flag any claim that the system detects, diagnoses, cures, or predicts dementia or Alzheimer's. Ensure only terms like 'cognitive engagement' or 'memory assistance' are used.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "**/*",
+      "rule": "SECURITY: Flag any hardcoded API keys, JWT secrets, database passwords, or private tokens. Ensure no personal patient health information (PHI/PII) is logged to console or files.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "backend/**",
+      "rule": "BACKEND & DATABASE: Ensure authentication and RBAC authorization are enforced. All database schema modifications must have corresponding Alembic migrations. The /sync/upload endpoint must be idempotent using client_uuid with ON CONFLICT DO NOTHING. LLM calls must not write directly to database tables.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "ml/**",
+      "rule": "AI/ML ENGINE: Adaptive difficulty must follow the rule engine formula: 0.5 * accuracy_norm + 0.3 * speed_score + 0.2 * hint_efficiency. Verify boundary conditions (zero hints, max hints, zero reaction time, missing values). Isolation Forest outputs must be framed as 'unusual performance change', never clinical diagnosis.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "voice/**",
+      "rule": "VOICE PROCESSING: Voice commands must be strictly validated against allowlisted intents ('Start memory game', 'Remind me to drink water', 'What is my next activity?', 'Open today's game'). Sensitive actions must require user confirmation.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "apps/elderly_app/**",
+      "rule": "ELDERLY APP: Verify offline-first persistence using SQLite/Hive with UUID generation. Ensure elderly accessibility: large touch targets (minimum 48x48dp), high visual contrast, and clear font sizing.",
+      "merge_system_rule": true
+    },
+    {
+      "path": "apps/caregiver_dashboard/**",
+      "rule": "CAREGIVER DASHBOARD: Ensure caregiver-patient data isolation. Charts and trends must accurately present performance metrics without clinical diagnostic framing.",
+      "merge_system_rule": true
+    }
+  ]
+}

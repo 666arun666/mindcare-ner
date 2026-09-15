@@ -1,0 +1,103 @@
+name: Security & Vulnerability Scanning
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  schedule:
+    # Run weekly security scan on Sundays at midnight
+    - cron: '0 0 * * 0'
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # Secret Leakage Detection
+  # ----------------------------------------------------------------------------
+  secret-scan:
+    name: Secret Leakage Scan (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # ----------------------------------------------------------------------------
+  # Python SAST & Dependency Audit
+  # ----------------------------------------------------------------------------
+  python-security:
+    name: Python Security Scan (Bandit & pip-audit)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Security Tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install bandit pip-audit
+
+      - name: Run Bandit SAST (Backend, ML, Voice)
+        run: |
+          bandit -r backend/src ml/src voice/src -ll -ii -x "tests"
+
+      - name: Run pip-audit on Backend
+        run: |
+          pip install -e ./backend
+          pip-audit
+
+  # ----------------------------------------------------------------------------
+  # Node Security & Audit
+  # ----------------------------------------------------------------------------
+  node-security:
+    name: Node Vulnerability Audit (npm audit)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/caregiver_dashboard
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level=high
+
+  # ----------------------------------------------------------------------------
+  # Docker Security Linting
+  # ----------------------------------------------------------------------------
+  docker-security:
+    name: Dockerfile Linting (Hadolint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Hadolint
+        uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: docker/Dockerfile.backend
+          failure-threshold: warning

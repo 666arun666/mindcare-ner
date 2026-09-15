@@ -1,0 +1,95 @@
+openapi: 3.1.0
+info:
+  title: MINDCARE NER API
+  description: API for MINDCARE NER cognitive support, caregiver dashboard, and offline event synchronization.
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+  /auth/login:
+    post:
+      summary: Caregiver JWT login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                  token_type:
+                    type: string
+  /sync/upload:
+    post:
+      summary: Idempotent upload of batched offline cognitive sessions
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [device_id, events]
+              properties:
+                device_id:
+                  type: string
+                events:
+                  type: array
+                  items:
+                    type: object
+                    required: [client_uuid, patient_id, game_id, difficulty_level, accuracy, duration_seconds, completed_at]
+                    properties:
+                      client_uuid:
+                        type: string
+                        format: uuid
+                      patient_id:
+                        type: string
+                      game_id:
+                        type: string
+                      difficulty_level:
+                        type: integer
+                      accuracy:
+                        type: number
+                      duration_seconds:
+                        type: number
+                      hints_used:
+                        type: integer
+                      completed_at:
+                        type: string
+                        format: date-time
+      responses:
+        '200':
+          description: Sync batch processed idempotently
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

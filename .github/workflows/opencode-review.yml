@@ -1,0 +1,62 @@
+name: OpenCodeReview AI Analysis
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+
+concurrency:
+  group: ocr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  opencode-review:
+    name: OpenCodeReview AI Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history so merge-base can be accurately determined
+
+      - name: Verify OpenCodeReview Credentials
+        id: check-secrets
+        run: |
+          if [ -z "${{ secrets.OCR_LLM_TOKEN }}" ]; then
+            echo "OCR_CONFIGURED=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=OpenCodeReview::OCR_LLM_TOKEN is not configured in GitHub Secrets. OpenCodeReview will be skipped for this run. Configure OCR_LLM_TOKEN, OCR_LLM_URL, and OCR_LLM_MODEL in repository settings to enable AI reviews."
+          else
+            echo "OCR_CONFIGURED=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run Alibaba OpenCodeReview
+        if: steps.check-secrets.outputs.OCR_CONFIGURED == 'true'
+        uses: alibaba/open-code-review@main
+        with:
+          llm_url: ${{ secrets.OCR_LLM_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1' }}
+          llm_auth_token: ${{ secrets.OCR_LLM_TOKEN }}
+          llm_model: ${{ secrets.OCR_LLM_MODEL || 'qwen2.5-coder-32b-instruct' }}
+          llm_use_anthropic: ${{ secrets.OCR_USE_ANTHROPIC || 'false' }}
+          rule: '.opencodereview/rule.json'
+          language: 'English'
+          sticky_summary: 'true'
+          upload_artifacts: 'true'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          review_task_timeout: 15
+          route_severity_below: 'low'
+
+      - name: Review Policy Reminder
+        run: |
+          echo "================================================================="
+          echo "SAFETY NOTICE:"
+          echo "OpenCodeReview provides AI-assisted recommendations only."
+          echo "It is NOT the final authority and CANNOT merge pull requests."
+          echo "Human review and approval by team code owners is mandatory."
+          echo "================================================================="
