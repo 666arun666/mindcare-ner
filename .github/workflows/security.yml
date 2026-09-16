@@ -62,7 +62,7 @@ jobs:
       - name: Run pip-audit on Backend
         run: |
           pip install -e ./backend
-          pip-audit
+          pip-audit --skip-editable
 
   # ----------------------------------------------------------------------------
   # Node Security & Audit
