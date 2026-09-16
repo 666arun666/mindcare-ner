@@ -1,14 +1,12 @@
-import os
 import pytest
+from backend.src.core.database import Base, get_db
+from backend.src.core.security import hash_password
+from backend.src.main import app
+from backend.src.models.patient import Patient, User
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
-from backend.src.core.database import Base, get_db
-from backend.src.core.security import hash_password
-from backend.src.models.patient import User, Patient
-from backend.src.main import app
 
 # In-memory SQLite engine for tests
 TEST_DATABASE_URL = "sqlite:///:memory:"

@@ -1,6 +1,7 @@
 FROM python:3.11-slim
 
 # Install system dependencies & curl for healthcheck
+# hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gcc \
@@ -16,8 +17,8 @@ RUN useradd -u 1001 -m appuser
 COPY backend /app/backend
 COPY shared /app/shared
 
-# Install dependencies
-RUN pip install --no-cache-dir --upgrade pip && \
+# Install dependencies with pinned pip for reproducible builds (DL3013)
+RUN pip install --no-cache-dir pip==24.2 && \
     pip install --no-cache-dir -e /app/backend
 
 # Switch to non-root user

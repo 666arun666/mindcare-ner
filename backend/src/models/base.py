@@ -1,7 +1,6 @@
 from datetime import UTC, datetime
 
 from sqlalchemy import Column, DateTime
-from backend.src.core.database import Base
 
 
 class TimestampMixin:

@@ -1,8 +1,10 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:elderly_app/main.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Elderly app smoke test verifies title and buttons', (WidgetTester tester) async {
+  testWidgets('Elderly app smoke test verifies title and buttons', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MindCareApp());
 
     // Verify app title and greeting

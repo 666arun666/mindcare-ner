@@ -1,5 +1,6 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
+
 from backend.src.models.session import GameSession
 
 
@@ -13,7 +14,7 @@ def test_offline_sync_lifecycle_and_idempotency(client, test_patient, db_session
     5. Server suppresses duplicate, returns success, exactly ONE record persists.
     """
     fixed_client_uuid = str(uuid.uuid4())
-    completed_time = datetime.now(timezone.utc).isoformat()
+    completed_time = datetime.now(UTC).isoformat()
 
     payload = {
         "device_id": "device-tablet-01",
@@ -41,9 +42,7 @@ def test_offline_sync_lifecycle_and_idempotency(client, test_patient, db_session
 
     # Verify session is persisted in DB
     records_after_first = (
-        db_session.query(GameSession)
-        .filter(GameSession.client_uuid == fixed_client_uuid)
-        .all()
+        db_session.query(GameSession).filter(GameSession.client_uuid == fixed_client_uuid).all()
     )
     assert len(records_after_first) == 1
 
@@ -57,9 +56,7 @@ def test_offline_sync_lifecycle_and_idempotency(client, test_patient, db_session
     assert fixed_client_uuid not in data_2["accepted_uuids"]
 
     records_after_retry = (
-        db_session.query(GameSession)
-        .filter(GameSession.client_uuid == fixed_client_uuid)
-        .all()
+        db_session.query(GameSession).filter(GameSession.client_uuid == fixed_client_uuid).all()
     )
     # Critical property: Total rows in database must still be exactly 1
     assert len(records_after_retry) == 1
@@ -74,7 +71,7 @@ def test_batch_sync_with_partial_duplicates_and_failures(client, test_patient, d
     """
     existing_uuid = str(uuid.uuid4())
     new_uuid = str(uuid.uuid4())
-    completed_time = datetime.now(timezone.utc).isoformat()
+    completed_time = datetime.now(UTC).isoformat()
 
     # Pre-seed one session
     seed_session = GameSession(
@@ -85,7 +82,7 @@ def test_batch_sync_with_partial_duplicates_and_failures(client, test_patient, d
         accuracy=0.9,
         duration_seconds=30.0,
         hints_used=0,
-        completed_at=datetime.now(timezone.utc),
+        completed_at=datetime.now(UTC),
     )
     db_session.add(seed_session)
     db_session.commit()

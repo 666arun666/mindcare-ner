@@ -110,7 +110,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: apps/caregiver_dashboard/package-lock.json
 
@@ -140,6 +140,8 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -176,6 +178,8 @@ jobs:
     defaults:
       run:
         working-directory: ml
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -212,6 +216,8 @@ jobs:
     defaults:
       run:
         working-directory: voice
+    env:
+      PYTHONPATH: ${{ github.workspace }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4

@@ -10,7 +10,9 @@ def test_health_check_endpoint(client):
 
 
 def test_patient_listing_authorized(client, test_caregiver, test_patient):
-    token = create_access_token({"sub": test_caregiver.id, "username": test_caregiver.username, "role": "caregiver"})
+    token = create_access_token(
+        {"sub": test_caregiver.id, "username": test_caregiver.username, "role": "caregiver"}
+    )
     headers = {"Authorization": f"Bearer {token}"}
 
     response = client.get("/api/v1/patients", headers=headers)
@@ -21,7 +23,9 @@ def test_patient_listing_authorized(client, test_caregiver, test_patient):
 
 
 def test_patient_creation_conflict(client, test_caregiver, test_patient):
-    token = create_access_token({"sub": test_caregiver.id, "username": test_caregiver.username, "role": "caregiver"})
+    token = create_access_token(
+        {"sub": test_caregiver.id, "username": test_caregiver.username, "role": "caregiver"}
+    )
     headers = {"Authorization": f"Bearer {token}"}
 
     # Attempt to create duplicate anonymized code

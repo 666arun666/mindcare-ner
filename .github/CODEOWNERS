@@ -2,56 +2,52 @@
 # MINDCARE NER — CODEOWNERS
 # SIH26003: AI-Based Cognitive Gaming & Memory Assistance Platform
 # ==============================================================================
-# NOTE FOR TEAM MEMBERS:
-# Replace the placeholders (@TEAM_MEMBER_1 .. @TEAM_MEMBER_6) with your actual
-# GitHub usernames or team handles (e.g., @arun-dev, @org/backend-team).
-#
-# Responsibility Split (6-Member Team):
-# - Member 1 (@TEAM_MEMBER_1): Flutter Elderly App + Cognitive Games + Local Store (SQLite/Hive)
-# - Member 2 (@TEAM_MEMBER_2): React Caregiver Dashboard + UI/UX + Charts
-# - Member 3 (@TEAM_MEMBER_3): FastAPI Backend + PostgreSQL Database + Auth/RBAC + API Contracts
-# - Member 4 (@TEAM_MEMBER_4): AI/ML + Rule-Based Adaptive Difficulty + Anomaly Detection
-# - Member 5 (@TEAM_MEMBER_5): Voice Processing (STT/TTS) + Offline Sync Client + Shared Schemas
-# - Member 6 (@TEAM_MEMBER_6): DevOps + CI/CD Pipelines + Security + Docker + Documentation + QA
+# Team Members (6-Member Student Team):
+# - Member 1 (@sivabalan352): Flutter Elderly App + Cognitive Games + SQLite/Hive
+# - Member 2 (@selvakumar-22): React Caregiver Dashboard + UI/UX + Charts
+# - Member 3 (@aarthipandiarajan): FastAPI Backend + PostgreSQL + Auth/RBAC + API Contracts
+# - Member 4 (@Rayyaan-byte): AI/ML Engine + Adaptive Difficulty + Anomaly Detection
+# - Member 5 (@dhayashree-s): Voice Processing (STT/TTS) + Offline Sync Client + Shared Schemas
+# - Member 6 (@666arun666): DevOps + CI/CD Pipelines + Security + Docker + Documentation + QA
 # ==============================================================================
 
 # Global Default Owners (DevOps / Integration Lead)
-* @TEAM_MEMBER_6
+* @666arun666
 
 # ------------------------------------------------------------------------------
 # Member 1: Elderly App (Flutter, Dart, Game Engine, SQLite/Hive)
 # ------------------------------------------------------------------------------
-/apps/elderly_app/ @TEAM_MEMBER_1
+/apps/elderly_app/ @sivabalan352
 
 # ------------------------------------------------------------------------------
 # Member 2: Caregiver Dashboard (React, TypeScript, Vite, Recharts)
 # ------------------------------------------------------------------------------
-/apps/caregiver_dashboard/ @TEAM_MEMBER_2
+/apps/caregiver_dashboard/ @selvakumar-22
 
 # ------------------------------------------------------------------------------
 # Member 3: Backend & Database (FastAPI, PostgreSQL, SQLAlchemy, Alembic, Auth)
 # ------------------------------------------------------------------------------
-/backend/ @TEAM_MEMBER_3
-/shared/contracts/ @TEAM_MEMBER_3
+/backend/ @aarthipandiarajan
+/shared/contracts/ @aarthipandiarajan
 
 # ------------------------------------------------------------------------------
 # Member 4: AI/ML Engine (Adaptive Difficulty, Isolation Forest, Feature Pipeline)
 # ------------------------------------------------------------------------------
-/ml/ @TEAM_MEMBER_4
+/ml/ @Rayyaan-byte
 
 # ------------------------------------------------------------------------------
 # Member 5: Voice & Offline Sync (faster-whisper, flutter_tts, Sync Client, Schemas)
 # ------------------------------------------------------------------------------
-/voice/ @TEAM_MEMBER_5
-/shared/schemas/ @TEAM_MEMBER_5
+/voice/ @dhayashree-s
+/shared/schemas/ @dhayashree-s
 
 # ------------------------------------------------------------------------------
 # Member 6: DevOps, CI/CD, Infrastructure, Security & Documentation
 # ------------------------------------------------------------------------------
-/.github/ @TEAM_MEMBER_6
-/docker/ @TEAM_MEMBER_6
-/scripts/ @TEAM_MEMBER_6
-/docs/ @TEAM_MEMBER_6
-/SECURITY.md @TEAM_MEMBER_6
-/CONTRIBUTING.md @TEAM_MEMBER_6
-/README.md @TEAM_MEMBER_6
+/.github/ @666arun666
+/docker/ @666arun666
+/scripts/ @666arun666
+/docs/ @666arun666
+/SECURITY.md @666arun666
+/CONTRIBUTING.md @666arun666
+/README.md @666arun666
