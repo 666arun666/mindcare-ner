@@ -61,16 +61,16 @@ mindcare-ner/
 
 ## 3. Team Structure & Ownership (6 Members)
 
-| Role | Domain / Directory | Responsibilities | Codeowner Handle |
+| Member | GitHub Handle | Directory / Scope | Contribution |
 |---|---|---|---|
-| **Member 1** | `/apps/elderly_app/` | Flutter app, game engine, elderly UI/UX, local SQLite/Hive | `@TEAM_MEMBER_1` |
-| **Member 2** | `/apps/caregiver_dashboard/` | React dashboard, charts, patient views, caregiver UI | `@TEAM_MEMBER_2` |
-| **Member 3** | `/backend/`, `/shared/contracts/` | FastAPI services, PostgreSQL, Alembic migrations, Auth/RBAC | `@TEAM_MEMBER_3` |
-| **Member 4** | `/ml/` | Adaptive difficulty engine, cold-start heuristics, Isolation Forest | `@TEAM_MEMBER_4` |
-| **Member 5** | `/voice/`, `/shared/schemas/` | Voice STT/TTS, offline sync client, event schemas | `@TEAM_MEMBER_5` |
-| **Member 6** | `/.github/`, `/docs/`, `/docker/`, `/scripts/` | DevOps, CI/CD, security policies, Docker, QA lead | `@TEAM_MEMBER_6` |
+| **Member 1** | `@sivabalan352` | `/apps/elderly_app/` | • Flutter elderly application<br>• Cognitive game engine<br>• Elderly UI/UX and accessibility<br>• Local SQLite/Hive functionality |
+| **Member 2** | `@selvakumar-22` | `/apps/caregiver_dashboard/` | • React caregiver dashboard<br>• Patient views<br>• Performance charts<br>• Caregiver UI |
+| **Member 3** | `@aarthipandiarajan` | `/backend/`, `/shared/contracts/` | • FastAPI backend services<br>• PostgreSQL integration<br>• Alembic migrations<br>• Authentication/RBAC<br>• API contracts |
+| **Member 4** | `@Rayyaan-byte` | `/ml/` | • Adaptive difficulty engine<br>• Cold-start heuristics<br>• ML experimentation<br>• Isolation Forest anomaly detection |
+| **Member 5** | `@dhayashree-s` | `/voice/`, `/shared/schemas/` | • Voice STT/TTS<br>• Offline synchronization client<br>• Shared event/data schemas |
+| **Member 6** | `@666arun666` | `/.github/`, `/docs/`, `/docker/`, `/scripts/` | • DevOps, CI/CD<br>• Security policies<br>• Docker<br>• QA and integration<br>• Repository/project coordination |
 
-*Note: Replace `@TEAM_MEMBER_*` placeholders in `.github/CODEOWNERS` with actual GitHub usernames.*
+*Note: Code ownership enforcement is configured in [.github/CODEOWNERS](.github/CODEOWNERS).*
 
 ---
 

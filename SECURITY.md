@@ -40,7 +40,7 @@ Every pull request is automatically analyzed by `.github/workflows/security.yml`
 If you identify a security vulnerability in MINDCARE NER:
 1. **Do not create a public GitHub issue.**
 2. Report the vulnerability privately to the project maintainers:
-   - Contact DevOps / Security Lead: `@TEAM_MEMBER_6`
+   - Contact DevOps / Security Lead: `@666arun666`
    - Or email the security team (contact listed in repository settings).
 3. Include:
    - Component affected (Backend, Dashboard, Elderly App, Voice, ML).
